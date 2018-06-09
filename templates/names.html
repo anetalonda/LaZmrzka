@@ -1,0 +1,118 @@
+<!-- Tohle je komentář v HTML. Prohlížeč ho ignoruje, ale Flask ne. Proto nemůžu
+     v komentářích používat kombinaci složená závorka-procento, protože Flask se
+     to snaží pochopit, i když je to jenom komentář. Proto v komentářích používám
+     {$ a $}, které Flask nezná, takže mu nevadí. Jenom si představ, že místo "$"
+     je tam "%" :) //-->
+
+
+<!-- {$ extends $} říká Flasku, že tato šablona rozšiřuje šablonu layout.html
+     Tohle je hodně užitečné, když máš vícero stránek, které mají stejnou hlavičku
+     a strukturu a liší se jenom v jedné části (třeba v hlavním obsahu) a nechceš
+     pokaždý tu hlavičku opakovat ve všech šablonách //-->
+{% extends "layout.html" %}
+<!-- Řekne flasku, že tedy začíná blok body - Flask vezme to, co je tedy mezi touhle
+     značkou a značkou {$ endblock $} a vloží to na stejně označené místo v layout.html
+//-->
+{% block body %}
+    <!-- Začátek oddílu stránky třídy jumbotron - třída jumbotron je zase definovaná
+         v jednom z těch .css souborů, které jsme připojili v hlavičce v layout.html
+        a říká, že obsah má být extra-velkými písmeny a na šedém pozadí //-->
+    <div class="jumbotron">
+        <h1>Vitej na moji prvni strance</h1>
+        <!-- <a href="url">Text</a> je HTML tag, který z textu "Text" udělá odkaz,
+             který odkazuje na adresu "url". V našem případ použijeme {{ a }}, což
+             říká Flasku aby vyhodnotil to, co je uvnitř a nahradil tím ty závorky.
+             url_for() je pak funkce Flasku, která vrátí, pro jakou adresu je
+             registrovaná funkce show_about() v blueprintu about_bp (což je "/about")
+        //-->
+        <a href="{{ url_for('about_bp.show_about') }}">Něco o mě</a>
+    </div>
+    <!-- Začátek odstavce//-->
+    <p>
+        <!-- Začátek formuláře. Formulář se má odeslat metodou POST - to je jeden
+             ze způsobů, kterým prohlížeče posílají data na server - v našem případě
+             k naší aplikaci. "action" je adresa, na kterou se mají ta data odeslat.
+             Jak funguje {{ url_for }} je vysvětlené o kousek výš, akorát že tady
+             získáme adresu pro funkci add_name() v blueprintu names_bp.
+             Třída form-inline způsobí, že se formuláč zobrazí hezky, a že
+             to vstupní pole a tlačítko na odeslání budou v jedné řádce (inline)
+        //-->
+        <form method="POST" action="{{ url_for('names_bp.add_name') }}" class="form-inline">
+            <!-- Vytvoří textové vstupní pole s názvem "user_name". To, co sem zadáš,
+                 se odešle do naší aplikace, a když se podiváš do funkce add_name()
+                 v names_bp.py tak uvidíš, že tam pomocí request.form['user_name']
+                 načítáme ta data, která uživatel vloží sem do tohohle pole 
+                 Placeholder je pak text, který se má zobrazit, když je to pole
+                 prázdné. //-->
+            <input type="text" name="user_name" class="form-control" placeholder="Jméno">
+            <!-- Vytvoří tlačítko na odeslání formuláře. Třídy btn a btn-default
+                 zajistí, aby tlačítko vypadalo hezky. Value Přidat je hodnota,
+                 která se má na tlačítku zobrazit //-->
+            <input type="submit" class="btn btn-default" value="Přidat">
+        <!-- Konec formuláře//-->
+        </form>
+    </p>
+    <!-- Vynechá řádek //-->
+    <br/>
+    <!-- Odstavec //-->
+    <p>
+        <!-- Začáatek tabulky. Třída table zajístí, aby tabulka vypadala dobře.
+             Třída table-striped zajístí, aby sudé a liché řádky měli trošku jiné
+             pozadí, aby se ta tabulka lépe četla. Třída table-bordered přidá
+             rámečky a třída table-hover zajistí, že když najedeš myší na nějaký
+             řádek té tabulky, tak ten se obarví //-->
+        <table class="table table-striped table-bordered table-hover">
+            <!-- Začátek prvního řádku tabulky //-->
+            <tr>
+                <!-- První sloupeček prvního řádku tabulky //-->
+                <th>Jmeno</th>
+                <!-- Druhý sloupeček prvního řádku tabulky //-->
+                <th>Datum pridani</th>
+                <!-- Třetí sloupeček prvního řádku tabulky //-->
+                <th>Akce</th>
+            <!-- Konec prvního řádku tabulky //-->
+            </tr>
+            <!-- {$ for entry in names $} je intrukce pro Flask, aby celý blok mezi
+                 tímto příkazem a příkazem {$ endfor $} zopakoval pro každý záznam
+                 v seznamu "names" - to je ten seznam záznamů, který jsme ve funkci
+                 show() v names_bp.py načetli z databázi promocí SQL a předali
+                 Flasku do funkce render_template(), které jsme řekli, aby použila
+                 tuto šablonu. //-->
+            {% for entry in names %}
+            <!-- Začátek nové řádky//-->
+            <tr>
+                <!-- První sloupec - {{ a }} říká Flasku aby tuto značku nahradil
+                     za to, co je v proměnné entry pod klíčem name (klíč "name" odpovidá
+                     názvu sloupečku "name" z naší SQL tabulky, protože odtamtud
+                     jsme tyhle záznamy získali) //-->
+                <td>{{ entry.name }}</td>
+                <!-- Druhý sloupec - stejně jako u prvního, akorát se použije
+                     hodnota ze sloupce "date" //-->
+                <td>{{ entry.date }}</td>
+                <!-- Třetí řádedk. Ťřetí řádek obsahuje odkaz, ale pomocí tříd btn
+                     řekneme, že chceme, aby ten odkaz vypadal jako tlačítko, ne jako
+                     klasický odkaz (modrý podtržený text). Třída btn-danger obarví
+                     tlačítko červeně.
+                     {{ url_for }} značku už jsem vysvětloval nahoře, jediný rozdíl
+                     je, že tady chceme URL pro funkci remove_name() v names_bp.py.
+                     Když se podiváš na tu funkci, tak zjistíš, že u ní je zadané,
+                     že ta URL má vypadat jako "/remove_name/<id>". To <id> tady
+                     potřebujeme nahradit za skutečné ID toho záznamu na tomto řádku
+                     tabulky, a to dělá ten parametr "id=entry.id", který říká, že
+                     jako ID se má použít id, které jsme pro tento záznam získali
+                     z databáze.
+                     //-->
+                <td><a href="{{ url_for('names_bp.remove_name', id=entry.id) }}" class="btn btn-danger">
+                        <!-- Vloží do tlačítka ikonku s křížkem //-->
+                        <span class="glyphicon glyphicon-remove"></span>
+                        Smazat</a>
+                </td>
+            <!-- Konec nového řádku //-->
+            </tr>
+            <!-- Konec opakování //-->
+            {% endfor %}
+        <!-- Konec tabulky //-->
+        </table>
+    </p>
+<!-- Konec bloku body //-->
+{% endblock %}
