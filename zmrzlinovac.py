@@ -1,5 +1,10 @@
+import sys
+import random
+import datetime
+from datetime import date, timedelta
+import itertools
 
-def zmrzlinuj(dnes, db):
+def zmrzlinuj(dnes, teplota_dnes, db):
     cursor = db.cursor()
     nazev_dne = dnes.weekday()
 
@@ -244,7 +249,7 @@ def zmrzlinuj(dnes, db):
     print("Finanční náročnost: ", fin_nar)
     print("Referenční fin. náročnost kombinace:", fin_nar_ref)
 
-    print("Počítám zmrzliny pro den: ", (start + datetime.timedelta(days=i)))
+    print("Počítám zmrzliny pro den: ", dnes)
     random.shuffle(seznam_komb)
     #print (start + datetime.timedelta(days=i))
     for kombo in seznam_komb:

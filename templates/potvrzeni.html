@@ -14,10 +14,10 @@
         <li>{{ zmrzka }}</li>
         {% endfor %}
     </ul>  
-    <form action="/zmrzka/generuj/{{ dnesstr }}/{{ konecstr }}">
+    <form action="/zmrzka/generuj/{{ dnesstr }}/{{ konecstr }}/{{ teplotastr }}">
     <input type="submit" value="Znovu">
     </form>  
-    <form action="/zmrzka/uloz/{{ dnesstr }}/{{ konecstr }}" method="POST">
+    <form action="/zmrzka/uloz/{{ dnesstr }}/{{ konecstr }}/{{ teplotastr }}" method="POST">
         <input type="hidden" name="kombo" value="{{ kombo|join(',') }}">
     <input type="submit" value="Další den">
     </form>  
