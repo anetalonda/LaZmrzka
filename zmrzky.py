@@ -17,10 +17,13 @@ def get_db():
 
 @blueprint.route("/zmrzka")
 def show():
-    # Velmi chytry kod ktery najde v databazi nejzassi den,
-    # pro ktery ma vygenerovanou zmrzlinu
-    minDatum = '2018-06-09'
-
+    conn = get_db()
+    cursor = conn.cursor()
+    minDatum = []
+    datum = ("select max(Datum) from Produkce ")
+    cursor.execute(datum)
+    for row in cursor.fetchall():
+        minDatum.append(row[0])
     return render_template("index.html", minDatum = minDatum)
 
 @blueprint.route("/zmrzka/generuj", methods = ['POST'])
