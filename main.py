@@ -23,6 +23,6 @@ kateApp.register_blueprint(zmrzky.blueprint)
 # když se ukončuje naše aplikace
 @kateApp.teardown_appcontext
 def close_db(error):
-    if hasattr(g, 'sqlite_db'):
+    if hasattr(g, 'mysql_db'):
         # Bezpečně ukončí spojení s naší databází
-        g.sqlite_db.close()
+        g.mysql_db.close()

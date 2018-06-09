@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+</head>
+<body>
+    <p>den: {{ dnesstr }} </p>
+    <ul>
+        {% for zmrzka in kombo %}
+        <li>{{ zmrzka }}</li>
+        {% endfor %}
+    </ul>  
+    <form action="/zmrzka/generuj/{{ dnesstr }}/{{ konecstr }}">
+    <input type="submit" value="Znovu">
+    </form>  
+    <form action="/zmrzka/uloz/{{ dnesstr }}/{{ konecstr }}" method="POST">
+        <input type="hidden" name="kombo" value="{{ kombo|join(',') }}">
+    <input type="submit" value="Další den">
+    </form>  
+</body>
+</html>
