@@ -12,7 +12,7 @@ main.py - hlavní (spouštěcí) program našeho webíku - v něm se vytvoří F
 names_bp.py - náš vlastní Blueprint pro stránku na zobrazování, vkládání a mazání
               jmen z databáze
 
-about_bp.py - náš vlastní Blueprint pro stránku "O mě"
+about_bp.py - náš vlastní Blueprint pro stránku "O mně"
 
 mydb.sqlite - SQLite datábáze, nad kterou spouštíme všechny naše SQL dotazy
 
@@ -45,7 +45,7 @@ Nyní aktivuj virtualní prostředí:
 
 Na Windows:
 
-    env\Scripts\activate.bat
+    venv\Scripts\activate.bat
 
 Na začátku příkazové řádky by se ti mělo objevit "venv", což znamená, že jsi nyní
 ve virtulálním prostředí našeho projektu. Tenhle krok musíš udělat vždycky, když
