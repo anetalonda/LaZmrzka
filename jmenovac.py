@@ -4,7 +4,7 @@ import datetime
 from datetime import date, timedelta
 import itertools
 
-def zmrzlinuj(dnes, teplota, db):
+def jmenuj(dnes, teplota, db):
     cursor = db.cursor()
     nazev_dne = dnes.weekday()
 
@@ -309,5 +309,12 @@ def zmrzlinuj(dnes, teplota, db):
                     if len(ingr_temp_c) != len(set(ingr_temp_c)):
                         continue
                     else:
-                        return kombo
+                        for x in kombo:
+                            cursor.execute("select Pk.Druh_Kod, Dz.Druh_Nazev from Produktovy_katalog Pk "\
+                                "left join Druh_zmrzliny Dz on Pk.Druh_Kod = Dz.Druh_Kod ")
+                            for row in cursor.fetchall():
+                                kombo2 = row [0]
+                                kombo_nazev = row[1]
+                                if x == kombo2:
+                                    return kombo_nazev
     return []

@@ -8,18 +8,21 @@
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
 </head>
 <body>
-    <p>den: {{ dnesstr }} </p>
-    <ul>
-        {% for zmrzka in kombo %}
+    <p>Den: {{ dnesstr }} </p>
+    <p>
+        {{ kombo_nazev }} <!--tady se bohuzel propisuje pouze prvni druh zmrzky -->
+    </p>
+    <!--<ul> odrážky jsem zatím schovala
+        {% for zmrzka in kombo_nazev %}
         <li>{{ zmrzka }}</li>
         {% endfor %}
-    </ul>  
-    <form action="/zmrzka/generuj/{{ dnesstr }}/{{ konecstr }}/{{ teplotastr }}">
-    <input type="submit" value="Znovu">
-    </form>  
-    <form action="/zmrzka/uloz/{{ dnesstr }}/{{ konecstr }}/{{ teplotastr }}" method="POST">
+    </ul>-->
+    <form action="/zmrzka/generuj/{{ dnesstr }}/{{ konecstr }}">
+    <input type="submit" value="ZNOVU">
+    </form>
+    <form action="/zmrzka/uloz/{{ dnesstr }}/{{ konecstr }}" method="POST">
         <input type="hidden" name="kombo" value="{{ kombo|join(',') }}">
-    <input type="submit" value="Další den">
-    </form>  
+    <input type="submit" value="DALŠÍ DEN">
+    </form>
 </body>
 </html>

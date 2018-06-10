@@ -9,6 +9,7 @@ from flask import Flask, g
 
 import zmrzky
 
+
 # Vytvoří novou Flask aplikaci a uloží ji do proměnné "kateApp"
 kateApp = Flask(__name__)
 # Zaregistruje blueprint z names_bp do naší Flask aplikace - names_bp.blueprint

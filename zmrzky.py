@@ -1,7 +1,13 @@
-# Naimportuje sqlite3 modul, abychom mohli pracovat s SQLite
+# Naimportovat moduly
 import mysql.connector
 import zmrzlinovac
+import jmenovac
 import datetime
+import heslo
+import pocasi
+from datetime import date, timedelta
+from darksky import forecast #nezapomenout nainstalovat darksky i ve virtualnim prostredi
+
 # Z flasku naimportuje spoustu různých funkcí, které budeme potřebovat
 from flask import Blueprint, request, g, url_for, render_template, redirect
 from jinja2 import exceptions
@@ -11,19 +17,19 @@ blueprint = Blueprint('zmrzky_bp', __name__)
 
 def get_db():
     if not hasattr(g, 'mysql_db'):
-        conn = mysql.connector.connect(host='localhost',user='root',password='Digizmrzka876', database='LaZmrzka')
+        conn = mysql.connector.connect(host='localhost',user='root',password=heslo.pasw, database='LaZmrzka')
         g.mysql_db = conn
     return g.mysql_db
 
 @blueprint.route("/zmrzka")
 def show():
-    #minDatum = '2018-06-12'
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("select max(Datum) from Produkce")
     data = cursor.fetchall()
     for row in data:
-        minDatum = row[0]
+        maxDatum = row[0]
+        minDatum = maxDatum + timedelta(days = 1)
     return render_template("index.html", minDatum = minDatum)
 
 @blueprint.route("/zmrzka/generuj", methods = ['POST'])
@@ -31,23 +37,32 @@ def generuj():
     # Datum ve formatu YYYY-MM-DD
     startDate = request.form['startDate']
     endDate = request.form['endDate']
-    teplota = request.form['teplota']
-    
-    return generuj_den(startDate, endDate, teplota)
+    return generuj_den(startDate, endDate)
 
-
-@blueprint.route("/zmrzka/generuj/<dnesstr>/<konecstr>/<int:teplota>")
-def generuj_den(dnesstr, konecstr, teplota):
+@blueprint.route("/zmrzka/generuj/<dnesstr>/<konecstr>")
+def generuj_den(dnesstr, konecstr):
     dnes = datetime.datetime.strptime(dnesstr, "%Y-%m-%d").date()
     konec = datetime.datetime.strptime(konecstr, "%Y-%m-%d").date()
-    kombo = zmrzlinovac.zmrzlinuj(dnes, teplota, get_db())
-    if len(kombo) == 0:
+    
+    praha = forecast(pocasi.klic, 50.0464, 14.3038)
+    teplota = int(praha.temperature)
+
+    kombo_nazev = jmenovac.jmenuj(dnes, teplota, get_db())
+
+    if len(kombo_nazev) == 0:
         # TODO: vypis error
         return "error"
-    return render_template("potvrzeni.html", dnesstr = dnesstr, konecstr = konecstr, kombo = kombo, teplotastr = teplota)
 
-@blueprint.route("/zmrzka/uloz/<dnesstr>/<konecstr>/<int:teplota>", methods=["POST"])
-def uloz(dnesstr, konecstr, teplota):
+    return render_template("potvrzeni.html", dnesstr = dnesstr, konecstr = konecstr, kombo_nazev = kombo_nazev, teplotastr = teplota)
+
+@blueprint.route("/zmrzka/uloz/<dnesstr>/<konecstr>", methods=["POST"])
+def uloz(dnesstr, konecstr):
+    dnes = datetime.datetime.strptime(dnesstr, "%Y-%m-%d").date()
+    konec = datetime.datetime.strptime(konecstr, "%Y-%m-%d").date()
+    
+    praha = forecast(pocasi.klic, 50.0464, 14.3038)
+    teplota = int(praha.temperature)
+    kombo = zmrzlinovac.zmrzlinuj(dnes, teplota, get_db())
     kombo = request.form['kombo'].split(",")
     conn = get_db()
     cursor = conn.cursor()
@@ -57,7 +72,22 @@ def uloz(dnesstr, konecstr, teplota):
     dnes = datetime.datetime.strptime(dnesstr, "%Y-%m-%d").date()
     zitra = dnes + datetime.timedelta(days = 1)
     if dnesstr == konecstr:
-        return show()
+        return seznam()
     else:
-        return generuj_den(zitra.strftime("%Y-%m-%d"), konecstr, teplota)
+        return generuj_den(zitra.strftime("%Y-%m-%d"), konecstr)
 
+#<!--zde se snazim vytvorit stranku, kde bude seznam s vygenerovanymi druhy zmrzlin (pro ty data, ktera byla zadana ve formulari) -->
+@blueprint.route("/seznam")
+def seznam():
+    dnes = datetime.datetime.strptime(dnesstr, "%Y-%m-%d").date()
+    konec = datetime.datetime.strptime(konecstr, "%Y-%m-%d").date()
+    
+    praha = forecast(pocasi.klic, 50.0464, 14.3038)
+    teplota = int(praha.temperature)
+
+    kombo_nazev = jmenovac.jmenuj(dnes, teplota, get_db())
+
+    try:
+        return render_template('seznam.html')
+    except exceptions.TemplateSyntaxError as e:
+        return "Template error: " + e.filename + " on line " + str(e.lineno)

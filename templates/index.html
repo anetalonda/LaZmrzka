@@ -6,6 +6,7 @@
     <title>Page Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <h1>Zmrzlinový generátor</h1>
 </head>
 <body>
     
@@ -18,17 +19,17 @@
 
         <p>
             <label for="endDate">Do:</label>
-            <input type="date" name="endDate" id="endDate">
-        </p>
-        
-        <p>
-            <label for="teplota">Teplota:</label>
-            <input type="number" name="teplota" id="teplota"> °C
+            <input type="date" name="endDate" id="endDate" min="{{ minDatum }}">
         </p>
 
+        <!--<p> teplotu už není potřeba zadávat
+            <label for="teplota">Teplota:</label>
+            <input type="number" name="teplota" id="teplota"> °C
+        </p>-->
+
         <p>
-            <input type="submit" value="JEDEMEEEEE!!!" >
-        </p>
+            <input type="submit" value="GENERUJ ZMRZKY" >
+
 
     </form>
 
