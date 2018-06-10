@@ -1,10 +1,10 @@
-<<<<<<< HEAD
-
-.DS_Store
-__pycache__/zmrzky.cpython-36.pyc
-=======
+.DS_Store/
 venv/
 __pycache__/
->>>>>>> 925b87d2904f858a11434a250854a49a76f39cd0
 heslo.py
+<<<<<<< HEAD
+pocasi.py
+=======
+.vscode/
+>>>>>>> f0c077b7118feab7e7ffcb0919bdfc096c10a17e
 pocasi.py
