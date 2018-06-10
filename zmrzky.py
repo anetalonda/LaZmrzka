@@ -17,13 +17,13 @@ def get_db():
 
 @blueprint.route("/zmrzka")
 def show():
+    #minDatum = '2018-06-12'
     conn = get_db()
     cursor = conn.cursor()
-    minDatum = []
-    datum = ("select max(Datum) from Produkce ")
-    cursor.execute(datum)
-    for row in cursor.fetchall():
-        minDatum.append(row[0])
+    cursor.execute("select max(Datum) from Produkce")
+    data = cursor.fetchall()
+    for row in data:
+        minDatum = row[0]
     return render_template("index.html", minDatum = minDatum)
 
 @blueprint.route("/zmrzka/generuj", methods = ['POST'])
