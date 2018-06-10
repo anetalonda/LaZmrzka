@@ -10,5 +10,5 @@ blueprint = Blueprint('about_bp', __name__)
 def show_about():
     # Zavolá funkci render_template(), která vezme template about.html a
     # vygeneruje výsledné HTML, které vrátí jako výsledek z téhle funkce zpátky
-    # do Fasku, a ten ji pošle k uživateli do prohlížeče.
+    # do Flasku, a ten ji pošle k uživateli do prohlížeče.
     return render_template('about.html')
