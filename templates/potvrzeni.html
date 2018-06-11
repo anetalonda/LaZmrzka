@@ -9,14 +9,11 @@
 </head>
 <body>
     <p>Den: {{ dnesstr }} </p>
-    <p>
-        {{ kombo_nazev }} <!--tady se bohuzel propisuje pouze prvni druh zmrzky -->
-    </p>
-    <!--<ul> odrážky jsem zatím schovala
+    <ul> 
         {% for zmrzka in kombo_nazev %}
         <li>{{ zmrzka }}</li>
         {% endfor %}
-    </ul>-->
+    </ul>
     <form action="/zmrzka/generuj/{{ dnesstr }}/{{ konecstr }}">
     <input type="submit" value="ZNOVU">
     </form>

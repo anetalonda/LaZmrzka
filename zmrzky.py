@@ -47,13 +47,19 @@ def generuj_den(dnesstr, konecstr):
     praha = forecast(pocasi.klic, 50.0464, 14.3038)
     teplota = int(praha.temperature)
 
-    kombo_nazev = jmenovac.jmenuj(dnes, teplota, get_db())
+    kombo = zmrzlinovac.zmrzlinuj(dnes, teplota, get_db())
+    
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT Druh_Nazev FROM Druh_Zmrzliny WHERE Druh_Kod IN (%(kody)s)", { "kody": kombo })
+    kombo_nazev = [ row[0] for row in cursor.fetchall() ]
+    return kombo_nazev
 
-    if len(kombo_nazev) == 0:
+    if len(kombo) == 0:
         # TODO: vypis error
         return "error"
 
-    return render_template("potvrzeni.html", dnesstr = dnesstr, konecstr = konecstr, kombo_nazev = kombo_nazev, teplotastr = teplota)
+    return render_template("potvrzeni.html", dnesstr = dnesstr, konecstr = konecstr, kombo = kombo, teplotastr = teplota)
 
 @blueprint.route("/zmrzka/uloz/<dnesstr>/<konecstr>", methods=["POST"])
 def uloz(dnesstr, konecstr):
