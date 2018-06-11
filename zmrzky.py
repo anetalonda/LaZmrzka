@@ -48,16 +48,24 @@ def generuj_den(dnesstr, konecstr):
     teplota = int(praha.temperature)
 
     kombo = zmrzlinovac.zmrzlinuj(dnes, teplota, get_db())
-    
+
     conn = get_db()
     cursor = conn.cursor()
     kombo_nazev = []
     for x in kombo:
-        cursor.execute("SELECT Druh_Nazev FROM Druh_Zmrzliny WHERE Druh_Kod = %(kod)s", { "kod": x })
+        cursor.execute("SELECT Druh_Nazev FROM Druh_Zmrzliny WHERE Druh_Kod = %(kod)s", { "kod": [x] })
         for row in cursor.fetchall():
             vysledek = row[0]
             kombo_nazev.append(vysledek)
-            return kombo_nazev
+    return kombo_nazev
+
+# Udělá dotaz, který pro všechny zadané kódy vrátí jejich názvy
+cursor.execute("SELECT Druh_Nazev FROM Druh_Zmrzliny WHERE Druh_Kod IN (%(kody)s)", { "kody": kombo })
+# fetchall() vrátí seznam jednoprvkových seznamů s názvy - něco jako 
+#        [ [ "Prvni nazev" ], [ "Druhy název" ], [ "Třetí název"], [ "Čtvrtý název" ] ]
+# Takže tady to jenom pomocí generátoru převedeme na jednoduchý seznam názvů
+kombo_nazev = [ row[0] for row in cursor.fetchall() ]
+return kombo_nazev
 
     if len(kombo) == 0:
         # TODO: vypis error
@@ -82,10 +90,10 @@ def uloz(dnesstr, konecstr):
     dnes = datetime.datetime.strptime(dnesstr, "%Y-%m-%d").date()
     zitra = dnes + datetime.timedelta(days = 1)
     if dnesstr == konecstr:
-        return seznam()
+        return show()
     else:
         return generuj_den(zitra.strftime("%Y-%m-%d"), konecstr)
-
+'''
 #<!--zde se snazim vytvorit stranku, kde bude seznam s vygenerovanymi druhy zmrzlin (pro ty data, ktera byla zadana ve formulari) -->
 @blueprint.route("/seznam")
 def seznam():
@@ -97,3 +105,4 @@ def seznam():
         return render_template('seznam.html')
     except exceptions.TemplateSyntaxError as e:
         return "Template error: " + e.filename + " on line " + str(e.lineno)
+'''
