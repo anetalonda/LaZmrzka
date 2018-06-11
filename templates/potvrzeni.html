@@ -3,16 +3,20 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Page Title</title>
+    <title>LA ZMRZKA kombinace</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
 </head>
 <body>
-    <p>Den: {{ dnesstr }} </p>
+    <font face="Arial Narrow" color="00a7b5">
+    <p><b>Den: {{ dnesstr }} </b></p>
+    </font>
     <ul> 
+        <font face="Arial Narrow" color="ff0084">
         {% for x in kombo_nazev %}
         <li>{{ x }}</li>
         {% endfor %}
+        </font>
     </ul>
     <form action="/zmrzka/generuj/{{ dnesstr }}/{{ konecstr }}">
     <input type="submit" value="ZNOVU">

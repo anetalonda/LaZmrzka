@@ -3,16 +3,18 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Page Title</title>
+    <title>LA ZMRZKA</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
-    <h1>Zmrzlinový generátor</h1>
+    <font face="Arial Narrow" color="00a7b5"><h1>Zmrzlinový generátor</h1></font>
+    
 </head>
 <body>
     
     <form method="POST" action="/zmrzka/generuj">
 
         <p>
+            <font face="Arial Narrow" color="ff0084">
             <label for="startDate">Od:</label>
             <input type="date" name="startDate" id="startDate" min="{{ minDatum }}">
         </p>
@@ -20,6 +22,7 @@
         <p>
             <label for="endDate">Do:</label>
             <input type="date" name="endDate" id="endDate" min="{{ minDatum }}">
+            </font>
         </p>
 
         <!--<p> teplotu už není potřeba zadávat
@@ -28,9 +31,8 @@
         </p>-->
 
         <p>
-            <input type="submit" value="GENERUJ ZMRZKY" >
-
-
+            <input type="submit" value="GENERUJ ZMRZKY">
+        </p>
     </form>
 
 </body>

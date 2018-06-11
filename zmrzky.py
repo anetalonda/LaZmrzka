@@ -51,20 +51,22 @@ def generuj_den(dnesstr, konecstr):
 
     conn = get_db()
     cursor = conn.cursor()
+
     kombo_nazev1 = []
     for x in kombo:
-        cursor.execute("SELECT Druh_Nazev FROM Druh_Zmrzliny WHERE Druh_Kod = %(kod)s", { "kod": x })
+        cursor.execute("SELECT Druh_Nazev FROM Druh_Zmrzliny WHERE Druh_Kod IN (%(kod0)s, %(kod1)s, %(kod2)s, %(kod3)s)", { "kod0": kombo[0], "kod1": kombo[1], "kod2": kombo[2], "kod3": kombo[3] })
         for row in cursor.fetchall():
             vysledek = row[0]
             kombo_nazev1.append(vysledek)
             kombo_nazev = (tuple(kombo_nazev1))
+        return render_template("potvrzeni.html", dnesstr = dnesstr, konecstr = konecstr, kombo_nazev = kombo_nazev, teplotastr = teplota)
     return kombo_nazev
 
     #if len(kombo) == 0:
         # TODO: vypis error
         #return "error"
 
-    return render_template("potvrzeni.html", dnesstr = dnesstr, konecstr = konecstr, kombo_nazev = kombo_nazev, teplotastr = teplota)
+
 
 @blueprint.route("/zmrzka/uloz/<dnesstr>/<konecstr>", methods=["POST"])
 def uloz(dnesstr, konecstr):
@@ -86,16 +88,16 @@ def uloz(dnesstr, konecstr):
         return show()
     else:
         return generuj_den(zitra.strftime("%Y-%m-%d"), konecstr)
-'''
+
 #<!--zde se snazim vytvorit stranku, kde bude seznam s vygenerovanymi druhy zmrzlin (pro ty data, ktera byla zadana ve formulari) -->
 @blueprint.route("/seznam")
 def seznam():
     dnesstr = request.form.get('dnesstr')
-    kombo = request.form.get('kombo')
-    return render_template('seznam.html', dnesstr=dnesstr, kombo=kombo)
+    konecstr = request.form.get('konecstr')
+    kombo_nazev = request.form.get('kombo_nazev')
+    return render_template('seznam.html', dnesstr=dnesstr, kombo_nazev=kombo_nazev)
 
     try:
         return render_template('seznam.html')
     except exceptions.TemplateSyntaxError as e:
         return "Template error: " + e.filename + " on line " + str(e.lineno)
-'''
