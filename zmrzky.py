@@ -51,17 +51,18 @@ def generuj_den(dnesstr, konecstr):
 
     conn = get_db()
     cursor = conn.cursor()
-    kombo_nazev = []
+    kombo_nazev1 = []
     for x in kombo:
-        cursor.execute("SELECT Druh_Nazev FROM Druh_Zmrzliny WHERE Druh_Kod = %(kod)s", { "kod": [x] })
+        cursor.execute("SELECT Druh_Nazev FROM Druh_Zmrzliny WHERE Druh_Kod = %(kod)s", { "kod": x })
         for row in cursor.fetchall():
             vysledek = row[0]
-            kombo_nazev.append(vysledek)
+            kombo_nazev1.append(vysledek)
+            kombo_nazev = (tuple(kombo_nazev1))
     return kombo_nazev
 
-    if len(kombo) == 0:
+    #if len(kombo) == 0:
         # TODO: vypis error
-        return "error"
+        #return "error"
 
     return render_template("potvrzeni.html", dnesstr = dnesstr, konecstr = konecstr, kombo_nazev = kombo_nazev, teplotastr = teplota)
 
