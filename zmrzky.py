@@ -51,9 +51,13 @@ def generuj_den(dnesstr, konecstr):
     
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT Druh_Nazev FROM Druh_Zmrzliny WHERE Druh_Kod IN (%(kody)s)", { "kody": kombo })
-    kombo_nazev = [ row[0] for row in cursor.fetchall() ]
-    return kombo_nazev
+    kombo_nazev = []
+    for x in kombo:
+        cursor.execute("SELECT Druh_Nazev FROM Druh_Zmrzliny WHERE Druh_Kod = %(kod)s", { "kod": x })
+        for row in cursor.fetchall():
+            vysledek = row[0]
+            kombo_nazev.append(vysledek)
+            return kombo_nazev
 
     if len(kombo) == 0:
         # TODO: vypis error
