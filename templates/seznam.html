@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--zde se snazim vytvorit stranku, kde bude seznam s vygenerovanymi druhy zmrzlin (pro ty data, ktera byla zadana ve formulari) -->
 <html>
 <head>
     <meta charset="utf-8" />
@@ -12,18 +13,17 @@
         <p>
             <table class="table table-striped table-bordered table-hover">
                     <tr>
-                        <th>Datum</th>                
+                        <th>Datum</th>
                         <th>Druh zmrzky</th>
                      </tr>
                      <tr>
-                        {{ dnesstr }}
-                        {{ zmrzka }}
+                        {{ dnesstr }} {{ kombo }}
                     </tr>
                 </table>
+            </p>
         <form method="POST" action="/zmrzka">
             <input type="submit" value="Zpět na úvodní stránku">
         </form>
-        </p>
 </body>
 </html>
 

@@ -89,13 +89,9 @@ def uloz(dnesstr, konecstr):
 #<!--zde se snazim vytvorit stranku, kde bude seznam s vygenerovanymi druhy zmrzlin (pro ty data, ktera byla zadana ve formulari) -->
 @blueprint.route("/seznam")
 def seznam():
-    dnes = datetime.datetime.strptime(dnesstr, "%Y-%m-%d").date()
-    konec = datetime.datetime.strptime(konecstr, "%Y-%m-%d").date()
-    
-    praha = forecast(pocasi.klic, 50.0464, 14.3038)
-    teplota = int(praha.temperature)
-
-    kombo_nazev = jmenovac.jmenuj(dnes, teplota, get_db())
+    dnesstr = request.form.get('dnesstr')
+    kombo = request.form.get('kombo')
+    return render_template('seznam.html', dnesstr=dnesstr, kombo=kombo)
 
     try:
         return render_template('seznam.html')
