@@ -10,8 +10,8 @@
 <body>
     <p>Den: {{ dnesstr }} </p>
     <ul> 
-        {% for zmrzka in kombo_nazev %}
-        <li>{{ zmrzka }}</li>
+        {% for x in kombo_nazev %}
+        <li>{{ x }}</li>
         {% endfor %}
     </ul>
     <form action="/zmrzka/generuj/{{ dnesstr }}/{{ konecstr }}">
