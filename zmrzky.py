@@ -37,10 +37,11 @@ def generuj():
     # Datum ve formatu YYYY-MM-DD
     startDate = request.form['startDate']
     endDate = request.form['endDate']
-    return generuj_den(startDate, endDate)
+    return generuj_den(startDate, startDate, endDate)
 
-@blueprint.route("/zmrzka/generuj/<dnesstr>/<konecstr>")
-def generuj_den(dnesstr, konecstr):
+@blueprint.route("/zmrzka/generuj/<startstr>/<dnesstr>/<konecstr>")
+def generuj_den(startstr, dnesstr, konecstr):
+    start = datetime.datetime.strptime(startstr, "%Y-%m-%d").date()
     dnes = datetime.datetime.strptime(dnesstr, "%Y-%m-%d").date()
     konec = datetime.datetime.strptime(konecstr, "%Y-%m-%d").date()
     
@@ -54,22 +55,31 @@ def generuj_den(dnesstr, konecstr):
 
     kombo_nazev1 = []
     for x in kombo:
-        cursor.execute("SELECT Druh_Nazev FROM Druh_Zmrzliny WHERE Druh_Kod IN (%(kod0)s, %(kod1)s, %(kod2)s, %(kod3)s)", { "kod0": kombo[0], "kod1": kombo[1], "kod2": kombo[2], "kod3": kombo[3] })
+        cursor.execute("SELECT Druh_Nazev FROM Druh_Zmrzliny WHERE Druh_Kod = %(kod)s", {"kod": x })
         for row in cursor.fetchall():
             vysledek = row[0]
             kombo_nazev1.append(vysledek)
             kombo_nazev = (tuple(kombo_nazev1))
-        return render_template("potvrzeni.html", dnesstr = dnesstr, konecstr = konecstr, kombo_nazev = kombo_nazev, teplotastr = teplota)
-    return kombo_nazev
+    
+    vysledky = {}
+    cursor.execute("select P.Datum, Dz.Druh_Nazev from Produkce P left join Druh_Zmrzliny Dz on P.Druh_Kod = Dz.Druh_Kod where Datum between %(anfang)s and %(ende)s order by Datum desc", {"anfang": start, "ende": konec})
+    data = cursor.fetchall()
+    for row in data:
+        if row[0] not in vysledky:
+            vysledky[row[0]] = [row[1]]
+        else:
+            vysledky[row[0]].append(row[1])
+
+    return render_template("potvrzeni.html", dnesstr = dnesstr, konecstr = konecstr, startstr = startstr, kombo_nazev = kombo_nazev1, teplotastr = teplota, kombo = kombo, vysledky = vysledky)
 
     #if len(kombo) == 0:
         # TODO: vypis error
         #return "error"
 
 
-
-@blueprint.route("/zmrzka/uloz/<dnesstr>/<konecstr>", methods=["POST"])
-def uloz(dnesstr, konecstr):
+@blueprint.route("/zmrzka/uloz/<startstr>/<dnesstr>/<konecstr>", methods=["POST"])
+def uloz(startstr, dnesstr, konecstr):
+    start = datetime.datetime.strptime(startstr, "%Y-%m-%d").date()
     dnes = datetime.datetime.strptime(dnesstr, "%Y-%m-%d").date()
     konec = datetime.datetime.strptime(konecstr, "%Y-%m-%d").date()
     
@@ -85,19 +95,51 @@ def uloz(dnesstr, konecstr):
     dnes = datetime.datetime.strptime(dnesstr, "%Y-%m-%d").date()
     zitra = dnes + datetime.timedelta(days = 1)
     if dnesstr == konecstr:
-        return show()
+        return seznam(startstr, dnesstr, konecstr)
     else:
-        return generuj_den(zitra.strftime("%Y-%m-%d"), konecstr)
+        return generuj_den(startstr, zitra.strftime("%Y-%m-%d"), konecstr)
+
+
+
 
 #<!--zde se snazim vytvorit stranku, kde bude seznam s vygenerovanymi druhy zmrzlin (pro ty data, ktera byla zadana ve formulari) -->
-@blueprint.route("/seznam")
-def seznam():
-    dnesstr = request.form.get('dnesstr')
-    konecstr = request.form.get('konecstr')
-    kombo_nazev = request.form.get('kombo_nazev')
-    return render_template('seznam.html', dnesstr=dnesstr, kombo_nazev=kombo_nazev)
+@blueprint.route("/zmrzka/seznam/<startstr>/<dnesstr>/<konecstr>")
+def seznam(startstr, dnesstr, konecstr):
+    start = datetime.datetime.strptime(startstr, "%Y-%m-%d").date()
+    dnes = datetime.datetime.strptime(dnesstr, "%Y-%m-%d").date()
+    konec = datetime.datetime.strptime(konecstr, "%Y-%m-%d").date()
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    vysledky = {}
+    cursor.execute("select P.Datum, Dz.Druh_Nazev from Produkce P left join Druh_Zmrzliny Dz on P.Druh_Kod = Dz.Druh_Kod where Datum between %(anfang)s and %(ende)s order by Datum desc", {"anfang": start, "ende": konec})
+    data = cursor.fetchall()
+    for row in data:
+        if row[0] not in vysledky:
+            vysledky[row[0]] = [row[1]]
+        else:
+            vysledky[row[0]].append(row[1])
+
+    return render_template("seznam.html", dnesstr = dnesstr, konecstr = konecstr, startstr = startstr, vysledky = vysledky)
+
+
+
 
     try:
         return render_template('seznam.html')
     except exceptions.TemplateSyntaxError as e:
         return "Template error: " + e.filename + " on line " + str(e.lineno)
+
+
+
+
+
+
+    
+
+
+
+
+
+

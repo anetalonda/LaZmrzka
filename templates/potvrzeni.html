@@ -8,22 +8,35 @@
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
 </head>
 <body>
-    <font face="Arial Narrow" color="00a7b5">
+    <font face="Arial Narrow" color="#00a7b5">
     <p><b>Den: {{ dnesstr }} </b></p>
     </font>
     <ul> 
-        <font face="Arial Narrow" color="ff0084">
+        <font face="Arial Narrow" color="#ff0084">
         {% for x in kombo_nazev %}
         <li>{{ x }}</li>
         {% endfor %}
         </font>
     </ul>
-    <form action="/zmrzka/generuj/{{ dnesstr }}/{{ konecstr }}">
+    <form action="/zmrzka/generuj/{{ startstr }}/{{ dnesstr }}/{{ konecstr }}">
     <input type="submit" value="ZNOVU">
     </form>
-    <form action="/zmrzka/uloz/{{ dnesstr }}/{{ konecstr }}" method="POST">
-        <input type="hidden" name="kombo" value="{{ kombo|join(',') }}">
+    <form action="/zmrzka/uloz/{{ startstr }}/{{ dnesstr }}/{{ konecstr }}" method="POST">
+    <input type="hidden" name="kombo" value="{{ kombo|join(',') }}">
     <input type="submit" value="DALŠÍ DEN">
     </form>
+    <font face="Arial Narrow" color="#A8A8A8">
+        <p>{% for key in vysledky %}
+            <b>Den: {{key}}</b>
+        <ul>
+            <font face="Arial Narrow" color="#696969">
+            {% for x in vysledky[key] %}
+            <li>{{ x }}</li>
+            {% endfor %}
+            </font>
+        </ul>
+        {% endfor %}
+    </p>
+    </font>
 </body>
 </html>
