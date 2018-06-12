@@ -9,27 +9,32 @@
 </head>
 <body>
     <form method=post action="/exp">
-    <table class="table table-striped table-bordered table-hover">
+    <table class="table table-striped table-bordered table-hover" border = "0,5" style="width: 60%; background: #E8E8E8">
         <tr>
-            <th>Datum</th>
-            <th>Druh zmrzky</th>
+            <th p style="color:#ff0084; text-align:left; font-family:Arial Narrow">Datum</th>
+            <th p style="color:#ff0084; text-align:left; font-family:Arial Narrow">Druh zmrzky 1</th>
+            <th p style="color:#ff0084; text-align:left; font-family:Arial Narrow">Druh zmrzky 2</th>
+            <th p style="color:#ff0084; text-align:left; font-family:Arial Narrow">Druh zmrzky 3</th>
+            <th p style="color:#ff0084; text-align:left; font-family:Arial Narrow">Druh zmrzky 4</th>
+        
+
         </tr>
         {% for key in vysledky %}
         <tr>
             <td>
-            <font face="Arial Narrow" color="#A8A8A8">
+            <font face="Arial Narrow" color="#00a7b5">
                 {{key}}
             </td>
             {% for x in vysledky[key] %}
             <td>
-            <font face="Arial Narrow" color="#696969">
+            <font face="Arial Narrow" color="#000000">
             {{ x }}
             </font>
             </td>
             {% endfor %}
             </font>
         </tr>
-        {{endfor}}
+        {% endfor %}
     </table>
     </form>
     <form method="POST" action="/zmrzka">
